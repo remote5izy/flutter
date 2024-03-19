@@ -9,14 +9,6 @@ class MainPageApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: '待辦事項',
-      theme: ThemeData(
-        primarySwatch: Colors.red,
-        colorScheme: ColorScheme.fromSwatch(
-          primarySwatch: Colors.red,
-          accentColor: Colors.black, 
-        ),
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
       home: MainPage(),
     );
   }
@@ -26,6 +18,7 @@ class MainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // 最上面的標題
       appBar: AppBar(
         title: Text('我的待辦事項'),
       ),
@@ -34,6 +27,7 @@ class MainPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // body首先一橫排icon組合的裝飾
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -47,27 +41,30 @@ class MainPage extends StatelessWidget {
                 Icon(Icons.access_alarm),
               ],
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 20), // 間隔
+            // 用stack重疊黑色背景和綠色card
             Stack(
               alignment: Alignment.center,
               children: [
                 Container(
                   width: double.infinity,
-                  height: 400,
-                  color: Colors.grey,
+                  height: 600,
+                  color: Colors.black,
                 ),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
+                    // 第一個待辦事項
                     Card(
                       elevation: 4,
-                      color: Theme.of(context).colorScheme.secondary,
+                      color: Colors.green,
                       child: ListTile(
                         title: Text(
                           '3/22 帶領查經: 約翰福音21:15-25',
                           style: TextStyle(color: Colors.white),
                         ),
                         onTap: () {
+                          // 點擊後導航至相應頁面
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -77,16 +74,18 @@ class MainPage extends StatelessWidget {
                         },
                       ),
                     ),
-                    SizedBox(height: 20),
+                    SizedBox(height: 40),
+                    // 第二個待辦事項
                     Card(
                       elevation: 4,
-                      color: Theme.of(context).colorScheme.secondary,
+                      color: Colors.green,
                       child: ListTile(
                         title: Text(
                           '3/26 CPE考試',
                           style: TextStyle(color: Colors.white),
                         ),
                         onTap: () {
+                          // 點擊後導航至相應頁面
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -96,16 +95,18 @@ class MainPage extends StatelessWidget {
                         },
                       ),
                     ),
-                    SizedBox(height: 20),
+                    SizedBox(height: 40),
+                    // 第三個待辦事項
                     Card(
                       elevation: 4,
-                      color: Theme.of(context).colorScheme.secondary,
+                      color: Colors.green,
                       child: ListTile(
                         title: Text(
                           '4/14 舞蹈編排展示: 祢使我雙腳跳舞',
                           style: TextStyle(color: Colors.white),
                         ),
                         onTap: () {
+                          // 點擊後導航至相應頁面
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -115,16 +116,18 @@ class MainPage extends StatelessWidget {
                         },
                       ),
                     ),
-                    SizedBox(height: 20),
+                    SizedBox(height: 40),
+                    // 第四個待辦事項
                     Card(
                       elevation: 4,
-                      color: Theme.of(context).colorScheme.secondary,
+                      color: Colors.green,
                       child: ListTile(
                         title: Text(
                           '5/25、26 外語領隊導遊考試: 口試',
                           style: TextStyle(color: Colors.white),
                         ),
                         onTap: () {
+                          // 點擊後導航至相應頁面
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -134,7 +137,6 @@ class MainPage extends StatelessWidget {
                         },
                       ),
                     ),
-                    SizedBox(height: 40),
                   ],
                 ),
               ],
@@ -158,6 +160,7 @@ class _JohnIntroductionPageState extends State<JohnIntroductionPage>
   @override
   void initState() {
     super.initState();
+    // 初始化TabController，設定標籤數量為3，並與動畫同步
     _tabController = TabController(length: 3, vsync: this);
   }
 
@@ -165,22 +168,23 @@ class _JohnIntroductionPageState extends State<JohnIntroductionPage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('3/22 帶領查經'),
+        title: Text('3/22 帶領查經'), // 頁面標題
+        backgroundColor: Colors.green, // AppBar背景顏色
         bottom: TabBar(
           controller: _tabController,
           tabs: [
-            Tab(text: '中文'),
-            Tab(text: 'Bilingual'),
-            Tab(text: '介紹'),
+            Tab(text: '中文'), // Tab標籤1：中文
+            Tab(text: 'Bilingual'), // Tab標籤2：雙語
+            Tab(text: '介紹'), // Tab標籤3：介紹
           ],
         ),
       ),
       body: TabBarView(
         controller: _tabController,
         children: [
-          JohnIntroductionChinesePage(),
-          JohnIntroductionBilingualPage(),
-          JohnIntroduction(),
+          JohnIntroductionChinesePage(), // 第一個Tab對應的內容：中文頁面
+          JohnIntroductionBilingualPage(), // 第二個Tab對應的內容：雙語頁面
+          JohnIntroduction(), // 第三個Tab對應的內容：介紹頁面
         ],
       ),
     );
@@ -188,6 +192,7 @@ class _JohnIntroductionPageState extends State<JohnIntroductionPage>
 
   @override
   void dispose() {
+    // 釋放TabController
     _tabController.dispose();
     super.dispose();
   }
@@ -479,13 +484,13 @@ class ChoreographyPage extends StatefulWidget {
 }
 
 class _ChoreographyPageState extends State<ChoreographyPage>
-    
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
+    // 初始化TabController，設定標籤數量為3，並與動畫同步
     _tabController = TabController(length: 3, vsync: this);
   }
 
@@ -493,27 +498,30 @@ class _ChoreographyPageState extends State<ChoreographyPage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('4/14 舞蹈編排展示'),
+        title: Text('4/14 舞蹈編排展示'), // 頁面標題
+        backgroundColor: Colors.green, // AppBar背景顏色
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            SizedBox(height: 20),
+            SizedBox(height: 20), // 上方間距
             Text(
-              '祢使我雙腳跳舞',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              '祢使我雙腳跳舞', // 標題文字
+              style:
+                  TextStyle(fontSize: 24, fontWeight: FontWeight.bold), // 文字樣式
             ),
-            SizedBox(height: 15),
+            SizedBox(height: 15), // 文字間距
             Text(
               '全地都向耶和華發出大聲歡呼，\n用琴歌頌你，用詩歌齊聲讚美你，\n願海和其中所充滿的彭湃歡呼，\n願大水拍手，願諸山一同歡呼。\n你使我的雙腳跳舞，你使我靈歡唱，\n我要全心全意全人全力讚美你，\n你使我的雙腳跳舞，你使我靈歡唱，\n我要全心全意全人全力讚美你。',
+              // 歌詞文字及格式
               style: TextStyle(fontSize: 22),
-              textAlign: TextAlign.center,
+              textAlign: TextAlign.center, // 文字對齊方式
             ),
-            SizedBox(height: 10),
+            SizedBox(height: 10), // 文字間距
             Text(
-              '詩集：讚美之泉 08 - 讓愛走動，30',
-              style: TextStyle(fontSize: 18),
+              '詩集：讚美之泉 08 - 讓愛走動，30', // 歌曲來源文字
+              style: TextStyle(fontSize: 18), // 文字樣式
             ),
           ],
         ),
@@ -533,6 +541,7 @@ class _CpeState extends State<Cpe> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    // 初始化TabController，設定標籤數量為3，並與動畫同步
     _tabController = TabController(length: 3, vsync: this);
   }
 
@@ -540,27 +549,31 @@ class _CpeState extends State<Cpe> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('3/26 CPE考試'),
+        title: Text('3/26 CPE考試'), // 頁面標題
+        backgroundColor: Colors.green, // AppBar背景顏色
       ),
       body: Center(
         child: PageView(
           children: <Widget>[
+            // PageView的子元素，包含了多個Widget
             Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    '每日一題Leetcode挑戰',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    '每日一題Leetcode挑戰', // 標題文字
+                    style: TextStyle(
+                        fontSize: 24, fontWeight: FontWeight.bold), // 文字樣式
                   ),
-                  SizedBox(height: 20), 
+                  SizedBox(height: 20), // 上方間距
                   Text(
-                    '左右翻動',
-                    style: TextStyle(fontSize: 18),
+                    '左右翻動', // 說明文字
+                    style: TextStyle(fontSize: 18), // 文字樣式
                   ),
                 ],
               ),
             ),
+            // 其他子元素是圖像
             Image.asset('assets/images/d1.png'),
             Image.asset('assets/images/d2.png'),
             Image.asset('assets/images/d3.png'),
@@ -587,6 +600,7 @@ class _TourGuideExamState extends State<TourGuideExam>
   @override
   void initState() {
     super.initState();
+    // 初始化TabController，設定標籤數量為2，並與動畫同步
     _tabController = TabController(length: 2, vsync: this);
   }
 
@@ -594,20 +608,21 @@ class _TourGuideExamState extends State<TourGuideExam>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('5/25、26 外語領隊導遊考試'),
+        title: Text('5/25、26 外語領隊導遊考試'), // 頁面標題
+        backgroundColor: Colors.green, // AppBar背景顏色
         bottom: TabBar(
           controller: _tabController,
           tabs: [
-            Tab(text: '歷年筆試筆記(左右翻閱)'),
-            Tab(text: '歷年口試題目'),
+            Tab(text: '歷年筆試筆記(左右翻閱)'), // 第一個標籤
+            Tab(text: '歷年口試題目'), // 第二個標籤
           ],
         ),
       ),
       body: TabBarView(
         controller: _tabController,
         children: [
-          Written(),
-          Oral(),
+          Written(), // 第一個標籤對應的內容
+          Oral(), // 第二個標籤對應的內容
         ],
       ),
     );
@@ -626,7 +641,7 @@ class Written extends StatelessWidget {
     return Scaffold(
       body: PageView(
         children: <Widget>[
-          TourGuide109(),
+          TourGuide109(), // 歷年筆試筆記的子頁面
           TourGuide108(),
           TourGuide107(),
           TourGuide106(),
@@ -1007,69 +1022,6 @@ class OralExamQuestionsPage extends StatelessWidget {
             style: TextStyle(fontSize: 16),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class StackDemo extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Stack Demo'),
-      ),
-      body: Center(
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            Container(
-              width: 200,
-              height: 200,
-              color: Colors.blue,
-            ),
-            Positioned(
-              top: 50,
-              left: 50,
-              child: Container(
-                width: 100,
-                height: 100,
-                color: Colors.red,
-                child: Center(child: Text('Top Left')),
-              ),
-            ),
-            Positioned(
-              bottom: 50,
-              right: 50,
-              child: Container(
-                width: 100,
-                height: 100,
-                color: Colors.green,
-                child: Center(child: Text('Bottom Right')),
-              ),
-            ),
-            Positioned(
-              top: 100,
-              right: 100,
-              child: Container(
-                width: 100,
-                height: 100,
-                color: Colors.yellow,
-                child: Center(child: Text('Top Right')),
-              ),
-            ),
-            Positioned(
-              bottom: 100,
-              left: 100,
-              child: Container(
-                width: 100,
-                height: 100,
-                color: Colors.orange,
-                child: Center(child: Text('Bottom Left')),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
