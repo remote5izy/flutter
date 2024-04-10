@@ -26,9 +26,9 @@ class _CheckBoxPageState extends State<CheckBoxPage> {
   String? selectedActivity;
   List<String> selectedOptions = [];
   Map<String, List<String>> activityOptions = {
-    '校慶': ['催場','表演','開場','介紹貴賓', '致詞', '大合照','頒獎','結束'],
-    '研討會及成果論壇': ['催場','開場','介紹貴賓', '致詞', '大合照','專題演講','中場休息','頒獎','結束'],
-    '新生說明會': ['催場', '表演','開場', '致詞', '大合照','中場休息','結束']
+    '校慶': ['催場', '表演', '開場', '介紹貴賓', '致詞', '大合照', '頒獎', '結束'],
+    '研討會/成果論壇': ['催場', '開場', '介紹貴賓', '致詞', '大合照', '專題演講', '中場休息', '頒獎', '結束'],
+    '新生說明會': ['催場', '表演', '開場', '致詞', '大合照', '中場休息', '結束']
   };
 
   @override
@@ -42,20 +42,29 @@ class _CheckBoxPageState extends State<CheckBoxPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            DropdownButton<String>(
-              isExpanded: true,
-              hint: Text('選擇活動類型'),
-              value: selectedActivity,
-              onChanged: (String? value) {
-                setState(() {
-                  selectedActivity = value;
-                  selectedOptions.clear();
-                });
-              },
-              items: activityOptions.keys.map((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
+            GridView.count(
+              crossAxisCount: 3,
+              shrinkWrap: true,
+              children: activityOptions.keys.map((String value) {
+                return TextButton(
+                  onPressed: () {
+                    setState(() {
+                      selectedActivity = value;
+                      selectedOptions.clear();
+                    });
+                  },
+                  child: Text(
+                    value,
+                    style: TextStyle(
+                      color: selectedActivity == value ? Colors.purple : null,
+                    ),
+                  ),
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.resolveWith<Color?>(
+                      (Set<MaterialState> states) =>
+                          selectedActivity == value ? Colors.orange[500] : null,
+                    ),
+                  ),
                 );
               }).toList(),
             ),
@@ -102,7 +111,7 @@ class _CheckBoxPageState extends State<CheckBoxPage> {
             showDialog(
               context: context,
               builder: (context) => AlertDialog(
-                title: Text('請選擇活動類型和文章要呈現的內容'),
+                title: Text('請選擇活動類型和司儀稿要呈現的內容'),
                 actions: [
                   TextButton(
                     onPressed: () {
@@ -124,7 +133,7 @@ class _CheckBoxPageState extends State<CheckBoxPage> {
     List<String> articleContentList = [];
     for (String option in selectedOptions) {
       if (option == '催場') {
-        articleContentList.add("尊敬的各位貴賓，歡迎蒞臨「[活動名稱]」。請留意，我們即將於[時間]後正式開始活動。在活動開始之前，請您注意以下重要事項：首先，請於[催場時間]前入座，備妥自己的座位，以確保您不會錯過活動的任何部分。另外，本場地全面禁止飲食。如您需要飲食，請至會場外進行。同時，我們提供了洗手間設施，洗手間位於[洗手間位置]。為了保持活動的安靜和專注，請您將手機調為震動或靜音。此外，請勿錄製或攝影活動內容，這是為了尊重演講者和活動的版權。如果您需要紙本會議手冊，我們在報到處有提供有限量的手冊，請您前往領取。最後，如果您需要同步口譯服務，我們也在報到處提供了相關設備，歡迎您前往取用。感謝您的合作，讓我們共同為這場活動創造出一個順利而愉快的環境。謝謝大家。");
+        articleContentList.add("尊敬的各位貴賓，歡迎蒞臨「[活動名稱]」。請留意，我們即將於[時間]後正式開始活動。在活動開始之前，請您注意以下重要事項...");
       } else if (option == '表演') {
         articleContentList.add("尊敬的各位貴賓，現在請您欣賞我們為大家精心準備的開場表演。今天，我們有幸邀請到了一個令人驚嘆的表演，由一群充滿熱情和才華的藝術家呈現。首先，我們將帶來一段動人心弦的音樂表演。請大家準備好感受音符的魔力，讓我們一起沉浸在美妙的音樂中。接下來，我們將欣賞一場令人目眩神迷的舞蹈表演。這將是一場充滿活力和靈感的舞蹈，帶給大家無限的驚喜和感動。讓我們用熱烈的掌聲歡迎我們的表演者，讓他們感受到我們的熱情和支持。現在，請讓我們將目光聚焦在舞台上，準備享受這場精彩絕倫的開場表演！讓音樂與舞蹈在這一刻開啟我們活動的序幕！");
       } else if (option == '開場') {
@@ -138,7 +147,7 @@ class _CheckBoxPageState extends State<CheckBoxPage> {
       } else if (option == '專題演講') {
         articleContentList.add("首先第一場專題演講，讓我們有請OOO為我們擔任引言人，掌聲歡迎OOO");
       } else if (option == '中場休息') {
-        articleContentList.add("上午[活動]圓滿告一段落，中午為貴賓準備餐盒，工作人員會招呼各位貴賓前往領餐，用餐地點在3F主會場與2樓用餐區，我們下午（一點）將會進行第五場專題演講。謝謝您的配合。");
+        articleContentList.add("上午[活動]圓滿告一段落，中午為貴賓準備餐盒，工作人員會招呼各位貴賓前往領餐...謝謝您的配合。");
       } else if (option == '頒獎') {
         articleContentList.add("現在，請頒獎人上台，為我們的得獎者頒獎。同時，請得獎者上台接受殊榮。");
       } else if (option == '結束') {
