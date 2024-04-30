@@ -24,15 +24,24 @@ class YatzyPage extends StatefulWidget {
 }
 
 class _YatzyPageState extends State<YatzyPage> {
-  int totalScore=0; // Total score of the game
+  int totalScore = 0; // Total score of the game
   bool gameOver = false; // Flag to indicate if the game is over
   List<int> dice = []; // List to store dice values
-  List<bool> keep = [false, false, false, false, false]; // List to store whether each dice should be kept
+  List<bool> keep = [
+    false,
+    false,
+    false,
+    false,
+    false
+  ]; // List to store whether each dice should be kept
   bool rolling = false; // Flag to indicate if dice are rolling
   int rollsLeft = 2; // Number of rolls left for the player
-  int upperSectionBonusThreshold = 63; // Threshold for achieving upper section bonus
-  bool upperSectionBonusAchieved = false; // Flag to indicate if upper section bonus is achieved
-  Map<String, int> scores = { // Map to store scores for different categories
+  int upperSectionBonusThreshold =
+      63; // Threshold for achieving upper section bonus
+  bool upperSectionBonusAchieved =
+      false; // Flag to indicate if upper section bonus is achieved
+  Map<String, int> scores = {
+    // Map to store scores for different categories
     'Ones': -1,
     'Twos': -1,
     'Threes': -1,
@@ -187,7 +196,6 @@ class _YatzyPageState extends State<YatzyPage> {
         }
         return 0; // If it doesn't meet the conditions for a Full House, the score is 0
 
-
       case 'Chance':
         return dice.reduce((value, element) => value + element);
 
@@ -286,10 +294,10 @@ class _YatzyPageState extends State<YatzyPage> {
               ),
             ),
             if (gameOver)
-                Text(
-                  'Total Score: $totalScore',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
+              Text(
+                'Total Score: $totalScore',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
           ],
         ),
       ),
