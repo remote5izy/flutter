@@ -24,15 +24,15 @@ class YatzyPage extends StatefulWidget {
 }
 
 class _YatzyPageState extends State<YatzyPage> {
-  int totalScore=0;
-  bool gameOver = false;
-  List<int> dice = [];
-  List<bool> keep = [false, false, false, false, false];
-  bool rolling = false;
-  int rollsLeft = 2;
-  int upperSectionBonusThreshold = 63;
-  bool upperSectionBonusAchieved = false;
-  Map<String, int> scores = {
+  int totalScore=0; // Total score of the game
+  bool gameOver = false; // Flag to indicate if the game is over
+  List<int> dice = []; // List to store dice values
+  List<bool> keep = [false, false, false, false, false]; // List to store whether each dice should be kept
+  bool rolling = false; // Flag to indicate if dice are rolling
+  int rollsLeft = 2; // Number of rolls left for the player
+  int upperSectionBonusThreshold = 63; // Threshold for achieving upper section bonus
+  bool upperSectionBonusAchieved = false; // Flag to indicate if upper section bonus is achieved
+  Map<String, int> scores = { // Map to store scores for different categories
     'Ones': -1,
     'Twos': -1,
     'Threes': -1,
@@ -200,17 +200,19 @@ class _YatzyPageState extends State<YatzyPage> {
         return 0;
     }
   }
-void selectScore(String category) {
+  
+  void selectScore(String category) {
     setState(() {
       scores[category] = calculateScore(category);
 
-      // 检查游戏是否结束，并更新总分值
+      // Check if the game is over and update total score
       if (!scores.containsValue(-1)) {
         gameOver = true;
-        totalScore = scores.values.reduce((value, element) => value + element); // 更新 totalScore 的值
+        totalScore = scores.values.reduce((value, element) => value + element);
       }
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -267,7 +269,6 @@ void selectScore(String category) {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 20),
-
             Expanded(
               child: ListView.builder(
                 itemCount: scores.length,
