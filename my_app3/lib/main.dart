@@ -171,11 +171,11 @@ class _YatzyPageState extends State<YatzyPage> {
         return 0;
 
       case 'Full House':
-        // 首先对骰子列表进行排序
+        // First, sort the list of dice
         List<int> sortedDice = [...dice];
         sortedDice.sort();
 
-        // 如果有两个不同的值，且有三个相同的值或者有三个相同的值且另外两个值也相同，则为 Full House
+        // If there are two different values and either three of the same value with another pair of the same value, or three of the same value with another pair of a different value, it's a Full House
         if ((sortedDice[0] == sortedDice[1] &&
                 sortedDice[3] == sortedDice[4] &&
                 (sortedDice[2] == sortedDice[0] ||
@@ -183,9 +183,10 @@ class _YatzyPageState extends State<YatzyPage> {
             (sortedDice[0] == sortedDice[2] &&
                 sortedDice[3] == sortedDice[4] &&
                 sortedDice[2] != sortedDice[3])) {
-          return 25; // 返回 Full House 的得分
+          return 25; // Return the score for Full House
         }
-        return 0; // 如果不符合 Full House 的条件，则得分为 0
+        return 0; // If it doesn't meet the conditions for a Full House, the score is 0
+
 
       case 'Chance':
         return dice.reduce((value, element) => value + element);
@@ -200,7 +201,7 @@ class _YatzyPageState extends State<YatzyPage> {
         return 0;
     }
   }
-  
+
   void selectScore(String category) {
     setState(() {
       scores[category] = calculateScore(category);
