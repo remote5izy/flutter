@@ -130,7 +130,7 @@ class PhotoWidget extends StatefulWidget {
 }
 
 class _PhotoWidgetState extends State<PhotoWidget> {
-  final String apiKey = 'AIzaSyBfQONUXMNXHE1vya-TkNKtSNERVhewpjk'; // 替換為你的API Key
+  final String apiKey = 'MY_API_KEY'; // 替換為你的API Key
   String? photoUrl;
 
   @override
