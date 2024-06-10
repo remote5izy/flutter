@@ -62,63 +62,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-
-
-
-
-
-
-
-// class PhotoWidget extends StatefulWidget {
-//   final double latitude;
-//   final double longitude;
-
-//   PhotoWidget({required this.latitude, required this.longitude});
-
-//   @override
-//   _PhotoWidgetState createState() => _PhotoWidgetState();
-// }
-
-// class _PhotoWidgetState extends State<PhotoWidget> {
-//   final String apiKey = 'AIzaSyBfQONUXMNXHE1vya-TkNKtSNERVhewpjk'; // 替換為你的API Key
-//   String? photoUrl;
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     fetchPhoto();
-//   }
-
-//   Future<void> fetchPhoto() async {
-//     final String location = '${widget.latitude},${widget.longitude}';
-//     final String url =
-//         'https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=Tourist%20Attraction&inputtype=textquery&locationbias=circle:2000@$location&fields=photos&key=$apiKey';
-
-//     final response = await http.get(Uri.parse(url));
-//     if (response.statusCode == 200) {
-//       final data = json.decode(response.body);
-//       final photos = data['candidates'][0]['photos'];
-//       if (photos != null && photos.isNotEmpty) {
-//         String photoReference = photos[0]['photo_reference'];
-//         String photoUrl = 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=$photoReference&key=$apiKey';
-//         setState(() {
-//           this.photoUrl = photoUrl;
-//         });
-//       }
-//     } else {
-//       throw Exception('Failed to load photo');
-//     }
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Center(
-//       child: photoUrl != null
-//           ? Image.network(photoUrl!)
-//           : CircularProgressIndicator(), // 如果正在加載，則顯示進度指示器
-//     );
-//   }
-// }
 class PhotoWidget extends StatefulWidget {
   final String placeName; // 定義 placeName 參數
 
@@ -130,7 +73,7 @@ class PhotoWidget extends StatefulWidget {
 }
 
 class _PhotoWidgetState extends State<PhotoWidget> {
-  final String apiKey = 'MY_API_KEY'; // 替換為你的API Key
+  final String apiKey = 'AIzaSyBfQONUXMNXHE1vya-TkNKtSNERVhewpjk'; // 替換為你的API Key
   String? photoUrl;
 
   @override
@@ -166,17 +109,6 @@ class _PhotoWidgetState extends State<PhotoWidget> {
         : SizedBox.shrink(); // 如果查不到圖片，返回一個空的 SizedBox
   }
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 // Class representing the scenic spots screen
