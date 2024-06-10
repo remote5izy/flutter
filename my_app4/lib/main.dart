@@ -51,7 +51,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       // Set the app title
-      title: 'Scenic Spots',
+      title: '交通部觀光資訊資料庫景點搜尋串接Google Places圖片',
       // Define the app theme
       theme: ThemeData(
         primarySwatch: Colors.blue,
@@ -62,9 +62,9 @@ class MyApp extends StatelessWidget {
   }
 }
 
+// Widget to display a photo fetched from Google Places API
 class PhotoWidget extends StatefulWidget {
-  final String placeName; // 定義 placeName 參數
-
+  final String placeName; // Define placeName parameter
 
   PhotoWidget({required this.placeName});
 
@@ -73,13 +73,13 @@ class PhotoWidget extends StatefulWidget {
 }
 
 class _PhotoWidgetState extends State<PhotoWidget> {
-  final String apiKey = 'AIzaSyBfQONUXMNXHE1vya-TkNKtSNERVhewpjk'; // 替換為你的API Key
+  final String apiKey = 'API Key'; //輸入API
   String? photoUrl;
 
   @override
   void initState() {
     super.initState();
-    fetchPhoto(widget.placeName); // 在初始化時調用 fetchPhoto，傳遞地點名稱
+    fetchPhoto(widget.placeName); // Fetch photo on initialization
   }
 
   Future<void> fetchPhoto(String placeName) async {
@@ -106,10 +106,9 @@ class _PhotoWidgetState extends State<PhotoWidget> {
   Widget build(BuildContext context) {
     return photoUrl != null
         ? Image.network(photoUrl!)
-        : SizedBox.shrink(); // 如果查不到圖片，返回一個空的 SizedBox
+        : SizedBox.shrink(); // Return empty SizedBox if no photo found
   }
 }
-
 
 // Class representing the scenic spots screen
 class ScenicSpotsScreen extends StatefulWidget {
@@ -123,12 +122,11 @@ class ScenicSpotsScreen extends StatefulWidget {
 }
 
 class _ScenicSpotsScreenState extends State<ScenicSpotsScreen> {
-  // Define variables for future data, debounce timer, data list, filtered data list, and search controller
+  // Define variables for future data, data list, search controller, and filtered list
   late Future<dynamic> _futureData;
-  late Timer _debounce;
   List<dynamic> _dataList = [];
   List<dynamic> _filteredDataList = [];
-  TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
 
   // Initialize state when the widget is built
   @override
@@ -136,103 +134,82 @@ class _ScenicSpotsScreenState extends State<ScenicSpotsScreen> {
     super.initState();
     // Fetch data initially
     _futureData = widget.dataManager.fetchData();
-    // Create a debounce timer to avoid excessive filtering on every character typed
-    _debounce = Timer(const Duration(milliseconds: 500), () {});
-
-    // Add listener to the search controller to trigger filtering on text changes
-    _searchController.addListener(() {
-      // Cancel any existing debounce timer
-      if (_debounce.isActive) _debounce.cancel();
-      // Create a new debounce timer to wait for 500 milliseconds before filtering
-      _debounce = Timer(const Duration(milliseconds: 500), () {
-        _filterData();
-      });
-    });
+    _searchController.addListener(_onSearchChanged);
   }
 
-  // Dispose of resources when the widget is disposed
+  // Dispose search controller
   @override
   void dispose() {
+    _searchController.removeListener(_onSearchChanged);
     _searchController.dispose();
-    _debounce.cancel();
     super.dispose();
   }
 
-  // Function to filter the data list based on the search query
-  void _filterData() {
-    final query = _searchController.text;
-
+  // Function to handle search input changes
+  void _onSearchChanged() {
     setState(() {
-      if (query.isEmpty) {
-        // If the query is empty, show all data
-        _filteredDataList = _dataList;
-      } else {
-        // Filter data by searching in name and description
-        _filteredDataList = _dataList.where((item) {
-          final name = item['Name'] ?? '';
-          final toldescribe = item['Toldescribe'] ?? '';
-          return name.contains(query) || toldescribe.contains(query);
-        }).toList();
-      }
-
+      String query = _searchController.text.toLowerCase();
+      _filteredDataList = _dataList
+          .where((item) =>
+              item['Name'].toString().toLowerCase().contains(query) ||
+              item['Toldescribe'].toString().toLowerCase().contains(query))
+          .toList();
     });
   }
 
-// Function to refresh the data by refetching it and updating the UI
-Future<void> _refreshData() async {
-  // Update the state to indicate that data is being fetched
-  setState(() {
-    _futureData = widget.dataManager.fetchData();
-  });
-}
+  // Function to refresh the data by refetching it and updating the UI
+  Future<void> _refreshData() async {
+    // Update the state to indicate that data is being fetched
+    setState(() {
+      _futureData = widget.dataManager.fetchData();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Scenic Spots'),
+        title: Text('觀光資訊搜尋 & Google Places API'),
       ),
       body: RefreshIndicator(
         onRefresh: _refreshData,
-        child: FutureBuilder(
-          future: _futureData,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
-            } else {
-              final dynamic data = snapshot.data;
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  labelText: 'Search',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                  suffixIcon: IconButton(
+                    icon: const Icon(Icons.clear),
+                    onPressed: () {
+                      _searchController.clear();
+                    },
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              child: FutureBuilder(
+                future: _futureData,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else {
+                    final dynamic data = snapshot.data;
 
-              if (data != null) {
-                _dataList = data['XML_Head']['Infos']['Info'];
-                _filteredDataList = _dataList;
-                return Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              controller: _searchController,
-                              decoration: InputDecoration(
-                                labelText: '按名稱搜索',
-                                border: OutlineInputBorder(),
-                                prefixIcon: Icon(Icons.search),
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 8),
-                          ElevatedButton(
-                            onPressed: () {},
-                            child: Text('搜索'),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: ListView.builder(
+                    if (data != null) {
+                      _dataList = data['XML_Head']['Infos']['Info'];
+                      _filteredDataList = _filteredDataList.isEmpty
+                          ? _dataList
+                          : _filteredDataList;
+                      return ListView.builder(
                         itemCount: _filteredDataList.length,
                         itemBuilder: (context, index) {
                           final Map<String, dynamic> item =
@@ -240,7 +217,7 @@ Future<void> _refreshData() async {
                           return Card(
                             margin: EdgeInsets.all(8.0),
                             child: ListTile(
-                              title: Text((item['Region'] ?? '')+
+                              title: Text((item['Region'] ?? '') +
                                   '-' +
                                   (item['Name'] ?? '')),
                               subtitle: Text(item['Toldescribe'] ?? ''),
@@ -256,15 +233,15 @@ Future<void> _refreshData() async {
                             ),
                           );
                         },
-                      ),
-                    ),
-                  ],
-                );
-              } else {
-                return Center(child: Text('No data available'));
-              }
-            }
-          },
+                      );
+                    } else {
+                      return Center(child: Text('No data available'));
+                    }
+                  }
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -278,103 +255,77 @@ class ScenicSpotDetailScreen extends StatelessWidget {
 
   ScenicSpotDetailScreen({required this.item});
 
-
-
-
-
-
-
   @override
   Widget build(BuildContext context) {
-//     double? px = double.tryParse(item['Px'].toString());
-// double? py = double.tryParse(item['Py'].toString());
-
     return Scaffold(
       // Set the app bar title to the scenic spot name
       appBar: AppBar(
-        title: Text((item['Name'])?? ''),
+        title: Text((item['Name']) ?? ''),
       ),
-      body:
-
-      SingleChildScrollView(
-      child: Padding(
-        // Add padding to the body content
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          // Align the column content to the start
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-
-// if (photoUrl != null)
-//                 Image.network(photoUrl!),
-//               SizedBox(height: 10),
-
-
-
-            // Display the scenic spot name and region with bold styling
-            Text(
-              (item['Region']?? '') + '-' + (item['Name'] ?? ''),
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 10),
-            // Display the scenic spot description
-            Text(item['Toldescribe'] ?? '', style: TextStyle(fontSize: 16)),
-            SizedBox(height: 20),
-//Add Px Py
-            Text(
-              'Address: ' + (item['Add'] ?? 'N/A')+' (' + (item['Px'].toString() ?? 'N/A')+ ', ' + (item['Py'].toString() ?? 'N/A') + ')' ,
-              style: TextStyle(fontSize: 16),
-            ),
-            SizedBox(height: 10),
-//Opentime
-            item['Opentime'] != null && item['Opentime'].isNotEmpty
-              ? Text(
-                  'Open Time: ' + item['Opentime'],
-                  style: TextStyle(fontSize: 16),
-                )
-              : SizedBox.shrink(),
-//Travellinginfo
-            item['Travellinginfo'] != null && item['Travellinginfo'].isNotEmpty
-              ? Text(
-                  'Travellinginfo: ' + item['Travellinginfo'],
-                  style: TextStyle(fontSize: 16),
-                )
-              : SizedBox.shrink(),
-//Ticketinfo
-            item['Ticketinfo'] != null && item['Ticketinfo'].isNotEmpty
-              ? Text(
-                  'Ticketinfo: ' + item['Ticketinfo'],
-                  style: TextStyle(fontSize: 16),
-                )
-              : SizedBox.shrink(),
-
-            // Display the phone number with label
-            Text(
-              'Tel: ' + (item['Tel'] ?? 'N/A'),
-              style: TextStyle(fontSize: 16),
-            ),
-
-            //Changetime
-            item['Changetime'] != null && item['Changetime'].isNotEmpty
-              ? Text(
-                  'Changetime: ' + item['Changetime'],
-                  style: TextStyle(fontSize: 16),
-                )
-              : SizedBox.shrink(),
-
-
-
-// if (px != null && py != null)
-//   PhotoWidget(latitude: py, longitude: px),
-PhotoWidget(placeName: item['Name']?? 'N/A'),
-PhotoWidget(placeName: item['Add']?? 'N/A'),
-
-
-          ],
+      body: SingleChildScrollView(
+        child: Padding(
+          // Add padding to the body content
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            // Align the column content to the start
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Display the scenic spot name and region with bold styling
+              Text(
+                (item['Region'] ?? '') + '-' + (item['Name'] ?? ''),
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 10),
+              // Display the scenic spot description
+              Text(item['Toldescribe'] ?? '', style: TextStyle(fontSize: 16)),
+              SizedBox(height: 20),
+              // Add Px Py
+              Text(
+                'Address: ' + (item['Add'] ?? 'N/A') +
+                ' (' + (item['Px'].toString() ?? 'N/A') + ', ' + (item['Py'].toString() ?? 'N/A') + ')',
+                style: TextStyle(fontSize: 16),
+              ),
+              SizedBox(height: 10),
+              // Opentime
+              item['Opentime'] != null && item['Opentime'].isNotEmpty
+                  ? Text(
+                      'Open Time: ' + item['Opentime'],
+                      style: TextStyle(fontSize: 16),
+                    )
+                  : SizedBox.shrink(),
+              // Travellinginfo
+              item['Travellinginfo'] != null && item['Travellinginfo'].isNotEmpty
+                  ? Text(
+                      'Travellinginfo: ' + item['Travellinginfo'],
+                      style: TextStyle(fontSize: 16),
+                    )
+                  : SizedBox.shrink(),
+              // Ticketinfo
+              item['Ticketinfo'] != null && item['Ticketinfo'].isNotEmpty
+                  ? Text(
+                      'Ticketinfo: ' + item['Ticketinfo'],
+                      style: TextStyle(fontSize: 16),
+                    )
+                  : SizedBox.shrink(),
+              // Display the phone number with label
+              Text(
+                'Tel: ' + (item['Tel'] ?? 'N/A'),
+                style: TextStyle(fontSize: 16),
+              ),
+              // Changetime
+              item['Changetime'] != null && item['Changetime'].isNotEmpty
+                  ? Text(
+                      'Changetime: ' + item['Changetime'],
+                      style: TextStyle(fontSize: 16),
+                    )
+                  : SizedBox.shrink(),
+              // Display photo using PhotoWidget
+              PhotoWidget(placeName: item['Name'] ?? 'N/A'),
+              PhotoWidget(placeName: item['Add'] ?? 'N/A'),
+            ],
+          ),
         ),
       ),
-
-)
     );
   }
 }
